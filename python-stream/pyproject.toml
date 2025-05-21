@@ -1,0 +1,31 @@
+[project]
+name = "app-service-python"
+version = "0.1.0"
+description = "app-service-python"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.115.12",
+    "pydantic>=2.11.4",
+    "pydantic-settings>=2.9.1",
+    "pytest>=8.3.5",
+    "pytest-asyncio>=0.26.0",
+    "python-dotenv>=1.1.0",
+    "uvicorn>=0.34.2",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.11.8",
+    "poethepoet>=0.34.0",
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+
+[tool.poe.tasks]
+start = "uv run python -m src.main"
+test = "uv run python -m pytest -v -s"
+lint = "ruff check ."
+format = "ruff format ." 
