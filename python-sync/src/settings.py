@@ -35,5 +35,9 @@ class Settings:
         os.getenv("WEB_SERVER_ENFORCE_HTTPS", "false").lower() == "true"
     )
 
+    AI_GOOGLE_GEMINI_API_KEY: str = os.getenv("AI_GOOGLE_GEMINI_API_KEY", "")
+    AI_GOOGLE_GEMINI_MODEL: str = os.getenv("AI_GOOGLE_GEMINI_MODEL", "gemini-2.0-flash")
+
+
 
 settings = Settings()
