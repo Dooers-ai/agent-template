@@ -187,12 +187,17 @@ async def process_message_service(
 
     except Exception as e:
         logger.error(f"Error generating response stream: {str(e)}")
-        error_chunk = MessageChunkError(event="error", error=str(e))
-        logger.info(f"[stream] sending error chunk: {str(e)}")
+
+        error_message = (
+            f"I'm sorry, I encountered an error while processing your request: {str(e)}"
+        )
+
+        error_chunk = MessageChunkError(event="error", error=error_message)
+        logger.info(f"[stream] sending error chunk: {error_message}")
         yield json.dumps(error_chunk.dict())
 
         finished_chunk = MessageChunkFinished(event="finished")
-        logger.info("[stream] sending finished chunk after error")
+        logger.info("[stream] sending finished chunk")
         yield json.dumps(finished_chunk.dict())
 
         raise
