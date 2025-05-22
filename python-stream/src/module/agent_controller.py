@@ -44,7 +44,7 @@ async def run_message(
             logger.info("stream protocol requested")
 
             async def event_generator():
-                stream_generator = await process_message_service(
+                stream_generator = process_message_service(
                     id_team_agent=id_team_agent,
                     id_team=id_team,
                     id_task=id_task,
@@ -56,7 +56,9 @@ async def run_message(
                 )
 
                 async for chunk in stream_generator:
-                    yield chunk
+                    yield f"data: {chunk}\n\n"
+                
+                yield "data: [DONE]\n\n"
 
             response = StreamingResponse(
                 event_generator(), media_type="text/event-stream"
