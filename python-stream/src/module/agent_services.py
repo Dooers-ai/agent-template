@@ -3,11 +3,23 @@ import logging
 import io
 import uuid
 from fastapi import UploadFile
-from typing import List, Union, AsyncGenerator, Dict
+from typing import List, AsyncGenerator, Dict
 from google import genai
+import json
+import asyncio
 
-from src.module.agent_models import MessageRequest, MessageResponse, Task, Thread
+from src.module.agent_models import (
+    MessageRequest,
+    MessageResponse,
+    Task,
+    Thread,
+    MessageChunkStarted,
+    MessageChunkText,
+    MessageChunkFinished,
+    MessageChunkError,
+)
 from src.settings import settings
+
 
 model_client = genai.Client(api_key=settings.AI_GOOGLE_GEMINI_API_KEY)
 
@@ -111,17 +123,42 @@ async def process_message_service(
     videos: List[UploadFile] = None,
     audios: List[UploadFile] = None,
     documents: List[UploadFile] = None,
-) -> Union[MessageResponse, AsyncGenerator[str, None]]:
+) -> AsyncGenerator[str, None]:
     created_at = time.strftime("%Y-%m-%dT%H:%M:%S.000Z", time.gmtime())
 
     model_content = await prepare_content(text, images, videos, audios, documents)
 
     try:
-        response = model_client.models.generate_content(
+        response_stream = model_client.models.generate_content_stream(
             model=settings.AI_GOOGLE_GEMINI_MODEL, contents=model_content
         )
 
-        response_text = response.text
+        started_chunk = MessageChunkStarted(
+            event="started",
+            id_team_agent=id_team_agent,
+            id_team=id_team,
+            id_task=id_task,
+            created_at=created_at,
+        )
+        logger.info("[stream] sending started chunk")
+        yield json.dumps(started_chunk.dict())
+
+        response_text = ""
+        chunk_count = 0
+
+        for chunk in response_stream:
+            chunk_text = chunk.text
+            if chunk_text:
+                response_text += chunk_text
+                chunk_count += 1
+
+                text_chunk = MessageChunkText(event="text-chunk", content=chunk_text)
+                logger.debug(f"[stream] sending text chunk: {chunk_text}")
+                yield json.dumps(text_chunk.dict())
+
+                # avoid overwhelming the client
+                if chunk_count % 5 == 0:
+                    await asyncio.sleep(0.01)
 
         message_request = MessageRequest(
             id_team_agent=id_team_agent, id_team=id_team, id_task=id_task, text=text
@@ -144,24 +181,21 @@ async def process_message_service(
             task.content.append(thread)
             await update_task_service(id_task, task)
 
-        return message_response
+        finished_chunk = MessageChunkFinished(event="finished")
+        logger.info("[stream] sending finished chunk")
+        yield json.dumps(finished_chunk.dict())
 
     except Exception as e:
-        logger.error(f"Error generating response: {str(e)}")
-        error_message = (
-            f"I'm sorry, I encountered an error while processing your request: {str(e)}"
-        )
+        logger.error(f"Error generating response stream: {str(e)}")
+        error_chunk = MessageChunkError(event="error", error=str(e))
+        logger.info(f"[stream] sending error chunk: {str(e)}")
+        yield json.dumps(error_chunk.dict())
 
-        message_error_response = MessageResponse(
-            id_team_agent=id_team_agent,
-            id_team=id_team,
-            id_task=id_task,
-            created_at=created_at,
-            text=error_message,
-            is_error=True,
-        )
+        finished_chunk = MessageChunkFinished(event="finished")
+        logger.info("[stream] sending finished chunk after error")
+        yield json.dumps(finished_chunk.dict())
 
-        return message_error_response
+        raise
 
 
 async def list_tasks_service(id_team_agent: str) -> List[Task]:

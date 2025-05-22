@@ -1,5 +1,6 @@
-from fastapi import APIRouter, status, Form, File, UploadFile, HTTPException
-from typing import List
+from fastapi import APIRouter, status, Form, File, UploadFile, HTTPException, Header
+from fastapi.responses import StreamingResponse
+from typing import List, Optional
 import logging
 
 from src.module.agent_models import Task, MessageResponse
@@ -32,27 +33,46 @@ async def run_message(
     videos: List[UploadFile] = File([]),
     audios: List[UploadFile] = File([]),
     documents: List[UploadFile] = File([]),
+    accept: Optional[str] = Header(None),
 ):
     try:
         logger.info(
             f"run_message [{id_team}/{id_team_agent}/{id_task}]:\nimages: {len(images)}, videos: {len(videos)}, audios: {len(audios)}, documents: {len(documents)}\ntext: {text}"
         )
 
-        service_response = await process_message_service(
-            id_team_agent=id_team_agent,
-            id_team=id_team,
-            id_task=id_task,
-            text=text,
-            images=images,
-            videos=videos,
-            audios=audios,
-            documents=documents,
-        )
+        if accept and "text/event-stream" in accept:
+            logger.info("stream protocol requested")
 
-        return service_response
+            async def event_generator():
+                stream_generator = await process_message_service(
+                    id_team_agent=id_team_agent,
+                    id_team=id_team,
+                    id_task=id_task,
+                    text=text,
+                    images=images,
+                    videos=videos,
+                    audios=audios,
+                    documents=documents,
+                )
+
+                async for chunk in stream_generator:
+                    yield chunk
+
+            response = StreamingResponse(
+                event_generator(), media_type="text/event-stream"
+            )
+
+            response.headers["Cache-Control"] = "no-cache"
+            response.headers["Connection"] = "keep-alive"
+            response.headers["X-Accel-Buffering"] = "no"
+
+            return response
+        else:
+            logger.error("sync protocol not implemented")
+            raise HTTPException(status_code=400, detail="sync protocol not implemented")
 
     except Exception as e:
-        logger.error(f"message_controller error: {str(e)}")
+        logger.error(f"run_message error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
