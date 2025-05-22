@@ -1,34 +1,37 @@
 from pydantic import BaseModel
 from typing import List, Optional, Literal, Union
-from enum import Enum
+
 
 class Image(BaseModel):
     name: str
-    type: Literal['image']
+    type: Literal["image"]
     size: Optional[int] = None
     base64: Optional[str] = None
     url: Optional[str] = None
     mime_type: Optional[str] = None
+
 
 class Video(BaseModel):
     name: str
-    type: Literal['video']
+    type: Literal["video"]
     size: Optional[int] = None
     base64: Optional[str] = None
     url: Optional[str] = None
     mime_type: Optional[str] = None
+
 
 class Audio(BaseModel):
     name: str
-    type: Literal['audio']
+    type: Literal["audio"]
     size: Optional[int] = None
     base64: Optional[str] = None
     url: Optional[str] = None
     mime_type: Optional[str] = None
 
+
 class Document(BaseModel):
     name: str
-    type: Literal['document']
+    type: Literal["document"]
     size: Optional[int] = None
     base64: Optional[str] = None
     url: Optional[str] = None
@@ -36,33 +39,20 @@ class Document(BaseModel):
 
 
 MessageChunkEvent = Literal[
-    "started", 
-    "text-chunk", 
-    "reasoning-chunk", 
-    "image-chunk", 
-    "video-chunk", 
-    "audio-chunk", 
+    "started",
+    "text-chunk",
+    "reasoning-chunk",
+    "image-chunk",
+    "video-chunk",
+    "audio-chunk",
     "document-chunk",
     "step",
     "loading",
-    "finished", 
-    "error", 
-    "interrupted"
+    "finished",
+    "error",
+    "interrupted",
 ]
 
-class MessageChunkEvent(str, Enum):
-    STARTED = "started"
-    TEXT_CHUNK = "text-chunk"
-    REASONING_CHUNK = "reasoning-chunk"
-    IMAGE_CHUNK = "image-chunk"
-    VIDEO_CHUNK = "video-chunk"
-    AUDIO_CHUNK = "audio-chunk"
-    DOCUMENT_CHUNK = "document-chunk"
-    STEP_CHUNK = "step-chunk"
-    LOADING_CHUNK = "loading-chunk"
-    FINISHED = "finished"
-    ERROR = "error"
-    INTERRUPTED = "interrupted"
 
 class MessageChunkStarted(BaseModel):
     event: Literal["started"]
@@ -71,13 +61,16 @@ class MessageChunkStarted(BaseModel):
     id_task: str
     created_at: str
 
+
 class MessageChunkText(BaseModel):
     event: Literal["text-chunk"]
     content: str
 
+
 class MessageChunkReasoning(BaseModel):
     event: Literal["reasoning-chunk"]
     content: str
+
 
 class MessageChunkImage(BaseModel):
     event: Literal["image-chunk"]
@@ -87,6 +80,7 @@ class MessageChunkImage(BaseModel):
     mime_type: str
     content: str
 
+
 class MessageChunkVideo(BaseModel):
     event: Literal["video-chunk"]
     name: str
@@ -94,6 +88,7 @@ class MessageChunkVideo(BaseModel):
     is_url: bool
     mime_type: str
     content: str
+
 
 class MessageChunkAudio(BaseModel):
     event: Literal["audio-chunk"]
@@ -103,6 +98,7 @@ class MessageChunkAudio(BaseModel):
     mime_type: str
     content: str
 
+
 class MessageChunkDocument(BaseModel):
     event: Literal["document-chunk"]
     name: str
@@ -111,25 +107,31 @@ class MessageChunkDocument(BaseModel):
     mime_type: str
     content: str
 
+
 class MessageChunkStep(BaseModel):
     event: Literal["step"]
     step: int
     content: str
 
+
 class MessageChunkLoading(BaseModel):
     event: Literal["loading"]
     progress: Optional[int] = None
 
+
 class MessageChunkFinished(BaseModel):
     event: Literal["finished"]
+
 
 class MessageChunkError(BaseModel):
     event: Literal["error"]
     error: str
 
+
 class MessageChunkInterrupted(BaseModel):
     event: Literal["interrupted"]
     reason: str
+
 
 MessageChunk = Union[
     MessageChunkStarted,
@@ -143,8 +145,8 @@ MessageChunk = Union[
     MessageChunkLoading,
     MessageChunkFinished,
     MessageChunkError,
-    MessageChunkInterrupted
-] 
+    MessageChunkInterrupted,
+]
 
 
 class MessageRequest(BaseModel):
@@ -156,6 +158,7 @@ class MessageRequest(BaseModel):
     videos: Optional[List[Video]] = None
     audios: Optional[List[Audio]] = None
     documents: Optional[List[Document]] = None
+
 
 class MessageResponse(BaseModel):
     id_team_agent: str
@@ -175,11 +178,11 @@ class MessageResponse(BaseModel):
     error: Optional[str] = None
     reason: Optional[str] = None
 
-# Task
 
 class Thread(BaseModel):
     request: MessageRequest
     response: Optional[MessageResponse] = None
+
 
 class Task(BaseModel):
     id_task: str
@@ -187,7 +190,7 @@ class Task(BaseModel):
     id_team: str
     title: str
     content: Optional[List[Thread]] = []
-    driver: Literal['auto','agent', 'user']
+    driver: Literal["auto", "agent", "user"]
     created_at: str
     updated_at: str
 
@@ -196,16 +199,20 @@ class SelectOption(BaseModel):
     value: str
     label: str
 
+
 class BaseField(BaseModel):
     id: str
-    element: Literal['input', 'textarea', 'select', 'image', 'image-input', 'button']
+    element: Literal["input", "textarea", "select", "image", "image-input", "button"]
     label: str
     required: bool = False
     readonly: bool = False
 
+
 class InputField(BaseField):
-    element: Literal['input']
-    type: Literal['text', 'password', 'email', 'tel', 'checkbox', 'file', 'number', 'date']
+    element: Literal["input"]
+    type: Literal[
+        "text", "password", "email", "tel", "checkbox", "file", "number", "date"
+    ]
     placeholder: Optional[str] = None
     value: Optional[str] = None
     checked: Optional[bool] = None
@@ -216,22 +223,25 @@ class InputField(BaseField):
     maxlength: Optional[int] = None
     align: Optional[Literal["left", "center", "right"]] = None
 
+
 class TextareaField(BaseField):
-    element: Literal['textarea']
+    element: Literal["textarea"]
     placeholder: Optional[str] = None
     value: Optional[str] = None
     rows: Optional[int] = None
     cols: Optional[int] = None
     maxlength: Optional[int] = None
 
+
 class SelectField(BaseField):
-    element: Literal['select']
+    element: Literal["select"]
     options: List[SelectOption]
     value: Optional[str] = None
     multiple: Optional[bool] = None
 
+
 class ImageField(BaseField):
-    element: Literal['image']
+    element: Literal["image"]
     src: str
     format: Literal["base64", "url"]
     alt: Optional[str] = None
@@ -239,8 +249,9 @@ class ImageField(BaseField):
     height: int
     align: Optional[Literal["left", "center", "right"]] = None
 
+
 class ImageInputField(BaseField):
-    element: Literal['image-input']
+    element: Literal["image-input"]
     value: Optional[str] = None
     format: Literal["base64", "url"]
     alt: Optional[str] = None
@@ -248,13 +259,18 @@ class ImageInputField(BaseField):
     height: int
     align: Optional[Literal["left", "center", "right"]] = None
 
+
 class ButtonField(BaseField):
-    element: Literal['button']
+    element: Literal["button"]
     label: str
     style: Optional[Literal["solid", "outline"]] = None
     variant: Optional[Literal["primary", "secondary"]] = None
 
-FormField = Union[InputField, TextareaField, SelectField, ImageField, ImageInputField, ButtonField]
+
+FormField = Union[
+    InputField, TextareaField, SelectField, ImageField, ImageInputField, ButtonField
+]
+
 
 class FormCategory(BaseModel):
     id: str
@@ -262,6 +278,7 @@ class FormCategory(BaseModel):
     order: int
     is_collapsed: bool
     fields: List[FormField]
+
 
 class Settings(BaseModel):
     version: str
