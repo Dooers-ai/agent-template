@@ -1,10 +1,14 @@
 from fastapi import APIRouter, HTTPException
 
-from src.module.agent_controller import router as agent_router
+from src.module.message_controller import router as message_router
+from src.module.task_controller import router as task_router
+from src.module.settings_controller import router as settings_router
 
 router = APIRouter(prefix="/api")
 
-router.include_router(agent_router, prefix="/v1")
+router.include_router(message_router, prefix="/v1")
+router.include_router(task_router, prefix="/v1")
+router.include_router(settings_router, prefix="/v1")
 
 
 @router.get("/{path:path}", include_in_schema=False)

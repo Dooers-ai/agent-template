@@ -179,20 +179,7 @@ class MessageResponse(BaseModel):
     reason: Optional[str] = None
 
 
-class Thread(BaseModel):
-    request: MessageRequest
-    response: Optional[MessageResponse] = None
-
-
-class Task(BaseModel):
-    id_task: str
-    id_team_agent: str
-    id_team: str
-    title: str
-    content: Optional[List[Thread]] = []
-    driver: Literal["auto", "agent", "user"]
-    created_at: str
-    updated_at: str
+# settings schema
 
 
 class SelectOption(BaseModel):

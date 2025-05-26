@@ -1,0 +1,289 @@
+{
+  "version": "1.0.0",
+  "categories": [
+    {
+      "id": "input_examples",
+      "label": "Input Field Examples",
+      "order": 1,
+      "is_collapsed": false,
+      "fields": [
+        {
+          "id": "text_input",
+          "element": "input",
+          "type": "text",
+          "label": "Text Input",
+          "placeholder": "Enter text here",
+          "value": "Sample text",
+          "required": true,
+          "readonly": false,
+          "maxlength": 100,
+          "align": "left"
+        },
+        {
+          "id": "email_input",
+          "element": "input",
+          "type": "email",
+          "label": "Email Input",
+          "placeholder": "user@example.com",
+          "required": true,
+          "readonly": false
+        },
+        {
+          "id": "password_input",
+          "element": "input",
+          "type": "password",
+          "label": "Password Input",
+          "placeholder": "Enter password",
+          "required": true,
+          "readonly": false,
+          "maxlength": 50
+        },
+        {
+          "id": "tel_input",
+          "element": "input",
+          "type": "tel",
+          "label": "Phone Input",
+          "placeholder": "+1 (555) 123-4567",
+          "required": false,
+          "readonly": false
+        },
+        {
+          "id": "checkbox_input",
+          "element": "input",
+          "type": "checkbox",
+          "label": "Checkbox Input",
+          "checked": true,
+          "required": false,
+          "readonly": false
+        },
+        {
+          "id": "file_input",
+          "element": "input",
+          "type": "file",
+          "label": "File Input",
+          "accept": ".pdf,.doc,.docx,.txt",
+          "required": false,
+          "readonly": false
+        },
+        {
+          "id": "number_input",
+          "element": "input",
+          "type": "number",
+          "label": "Number Input",
+          "placeholder": "100",
+          "value": "50",
+          "min": 1,
+          "max": 1000,
+          "step": 10,
+          "required": true,
+          "readonly": false,
+          "align": "right"
+        },
+        {
+          "id": "date_input",
+          "element": "input",
+          "type": "date",
+          "label": "Date Input",
+          "value": "2024-01-01",
+          "required": false,
+          "readonly": false
+        }
+      ]
+    },
+    {
+      "id": "textarea_examples",
+      "label": "Textarea Examples",
+      "order": 2,
+      "is_collapsed": false,
+      "fields": [
+        {
+          "id": "basic_textarea",
+          "element": "textarea",
+          "label": "Basic Textarea",
+          "placeholder": "Enter multiple lines of text here...",
+          "value": "Sample textarea content",
+          "rows": 4,
+          "cols": 50,
+          "maxlength": 500,
+          "required": false,
+          "readonly": false
+        },
+        {
+          "id": "large_textarea",
+          "element": "textarea",
+          "label": "Large Textarea",
+          "placeholder": "Enter detailed description...",
+          "rows": 8,
+          "cols": 80,
+          "maxlength": 2000,
+          "required": true,
+          "readonly": false
+        }
+      ]
+    },
+    {
+      "id": "select_examples",
+      "label": "Select Examples",
+      "order": 3,
+      "is_collapsed": false,
+      "fields": [
+        {
+          "id": "single_select",
+          "element": "select",
+          "label": "Single Select",
+          "options": [
+            {"value": "option1", "label": "Option 1"},
+            {"value": "option2", "label": "Option 2"},
+            {"value": "option3", "label": "Option 3"},
+            {"value": "option4", "label": "Option 4"}
+          ],
+          "value": "option1",
+          "required": true,
+          "readonly": false
+        },
+        {
+          "id": "multiple_select",
+          "element": "select",
+          "label": "Multiple Select",
+          "options": [
+            {"value": "item_a", "label": "Item A"},
+            {"value": "item_b", "label": "Item B"},
+            {"value": "item_c", "label": "Item C"},
+            {"value": "item_d", "label": "Item D"},
+            {"value": "item_e", "label": "Item E"}
+          ],
+          "value": "item_a",
+          "multiple": true,
+          "required": false,
+          "readonly": false
+        }
+      ]
+    },
+    {
+      "id": "image_examples",
+      "label": "Image Examples",
+      "order": 4,
+      "is_collapsed": true,
+      "fields": [
+        {
+          "id": "base64_image",
+          "element": "image",
+          "label": "Base64 Image",
+          "src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==",
+          "format": "base64",
+          "alt": "Sample base64 image",
+          "width": 150,
+          "height": 150,
+          "align": "center",
+          "required": false,
+          "readonly": false
+        },
+        {
+          "id": "url_image",
+          "element": "image",
+          "label": "URL Image",
+          "src": "https://via.placeholder.com/300x200/cccccc/000000?text=Sample+Image",
+          "format": "url",
+          "alt": "Sample URL image",
+          "width": 300,
+          "height": 200,
+          "align": "left",
+          "required": false,
+          "readonly": false
+        }
+      ]
+    },
+    {
+      "id": "button_examples",
+      "label": "Button Examples",
+      "order": 5,
+      "is_collapsed": true,
+      "fields": [
+        {
+          "id": "primary_solid_button",
+          "element": "button",
+          "label": "Primary Solid Button",
+          "style": "solid",
+          "variant": "primary",
+          "required": false,
+          "readonly": false
+        },
+        {
+          "id": "primary_outline_button",
+          "element": "button",
+          "label": "Primary Outline Button",
+          "style": "outline",
+          "variant": "primary",
+          "required": false,
+          "readonly": false
+        },
+        {
+          "id": "secondary_solid_button",
+          "element": "button",
+          "label": "Secondary Solid Button",
+          "style": "solid",
+          "variant": "secondary",
+          "required": false,
+          "readonly": false
+        },
+        {
+          "id": "secondary_outline_button",
+          "element": "button",
+          "label": "Secondary Outline Button",
+          "style": "outline",
+          "variant": "secondary",
+          "required": false,
+          "readonly": false
+        }
+      ]
+    },
+    {
+      "id": "special_cases",
+      "label": "Special Cases",
+      "order": 6,
+      "is_collapsed": true,
+      "fields": [
+        {
+          "id": "readonly_text",
+          "element": "input",
+          "type": "text",
+          "label": "Readonly Text Input",
+          "value": "This field is readonly",
+          "required": false,
+          "readonly": true
+        },
+        {
+          "id": "unchecked_checkbox",
+          "element": "input",
+          "type": "checkbox",
+          "label": "Unchecked Checkbox",
+          "checked": false,
+          "required": false,
+          "readonly": false
+        },
+        {
+          "id": "centered_number",
+          "element": "input",
+          "type": "number",
+          "label": "Centered Number Input",
+          "placeholder": "0",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "align": "center",
+          "required": false,
+          "readonly": false
+        },
+        {
+          "id": "image_files_only",
+          "element": "input",
+          "type": "file",
+          "label": "Image Files Only",
+          "accept": ".jpg,.jpeg,.png,.gif,.webp",
+          "required": false,
+          "readonly": false
+        }
+      ]
+    }
+  ]
+}

@@ -1,59 +1,19 @@
-from fastapi import APIRouter, status, Form, File, UploadFile, HTTPException
+from fastapi import APIRouter, status, HTTPException, Request
 from typing import List
 import logging
 
-from src.module.agent_models import Task, MessageResponse
-from src.module.agent_services import (
-    process_message_service,
+from src.module.task_services import (
     list_tasks_service,
     read_task_service,
     create_task_service,
     remove_task_service,
 )
 
+from src.module.task_models import Task
 
 logger = logging.getLogger("dooers-agent-template")
 
-router = APIRouter(tags=["agent"])
-
-
-@router.post(
-    "/messages",
-    response_model=MessageResponse,
-    summary="Process Message",
-    status_code=status.HTTP_200_OK,
-)
-async def run_message(
-    id_team_agent: str = Form(...),
-    id_team: str = Form(...),
-    id_task: str = Form(...),
-    text: str = Form(...),
-    images: List[UploadFile] = File([]),
-    videos: List[UploadFile] = File([]),
-    audios: List[UploadFile] = File([]),
-    documents: List[UploadFile] = File([]),
-):
-    try:
-        logger.info(
-            f"run_message [{id_team}/{id_team_agent}/{id_task}]:\nimages: {len(images)}, videos: {len(videos)}, audios: {len(audios)}, documents: {len(documents)}\ntext: {text}"
-        )
-
-        service_response = await process_message_service(
-            id_team_agent=id_team_agent,
-            id_team=id_team,
-            id_task=id_task,
-            text=text,
-            images=images,
-            videos=videos,
-            audios=audios,
-            documents=documents,
-        )
-
-        return service_response
-
-    except Exception as e:
-        logger.error(f"message_controller error: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
+router = APIRouter(tags=["task"])
 
 
 @router.get(
@@ -96,11 +56,12 @@ async def read_task(id_team_agent: str, id_task: str):
     status_code=status.HTTP_201_CREATED,
 )
 async def create_task(
-    id_team_agent: str, id_team: str = Form(...), text: str = Form(...)
+    id_team_agent: str, request: Request
 ):
     try:
-        logger.info(f"create_task: {id_team_agent}, {id_team}, {text}")
-        new_task = await create_task_service(id_team_agent, id_team, text)
+        input_form_data = await request.form()
+        logger.info(f"create_task: {id_team_agent}")
+        new_task = await create_task_service(id_team_agent, input_form_data)
         return await read_task_service(new_task.id_task)
     except Exception as e:
         logger.error(f"create_task error: {str(e)}")
